@@ -46,7 +46,6 @@ po/*~
 
 # data files
 derived_data/*
-source_data/api_raw.json
 source_data/pcen_v2018_y18.txt.zip
 source_data/__MACOSX
 source_data/AHRF_2018-2019
