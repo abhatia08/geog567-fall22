@@ -33,4 +33,4 @@ Please report issues to the [issues page](https://github.com/abhatia08/geog567-f
 
 - [Julia Cardwell](https://tarheels.live/juliacardwell/) (![Github](http://i.imgur.com/9I6NRUm.png): [jucardwell](https://github.com/jucardwell)) 
   
-- [Amy Tran]() (![Github](http://i.imgur.com/9I6NRUm.png): [amyltran](https://github.com/amyltran)) 
+- [Amy Tran](https://github.com/amyltran) (![Github](http://i.imgur.com/9I6NRUm.png): [amyltran](https://github.com/amyltran)) 
