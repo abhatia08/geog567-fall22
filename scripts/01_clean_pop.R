@@ -21,7 +21,7 @@ ensure_directory(here::here("derived_data"))
 
 # 01. POPULATION DATA (Percent non-white Hispanic + Percent white) ----
 
-## Download and reshape the 2018 NCHS bridged race population file. 
+## Download and reshape the 2018 NCHS bridged race population file.
 ## https://www.cdc.gov/nchs/nvss/bridged_race/data_documentation.htm#vintage2018%20
 
 ## Note that the code to clean and reshape this data is based on mkiang's repo:
@@ -102,12 +102,12 @@ nonwhite_df <- pop_df %>%
     p_nonwhite = (pop - nhw_pop) / pop * 100,
     p_white = nhw_pop / pop * 100
   )
-## 5. Write data to directory ----
 
+## 5. Filter data to FIPS codes that start with 06  ----
+nonwhite_df <- nonwhite_df %>%
+  dplyr::filter(stringr::str_detect(fips, "^06"))
+
+## 6. Write data to directory ----
 readr::write_csv(nonwhite_df,
                  here::here("derived_data",
                             "percent_nonwhite_pop.csv"))
-
-
-
-

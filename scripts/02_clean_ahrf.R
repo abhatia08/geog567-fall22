@@ -134,7 +134,11 @@ ahrf_subset <- ahrf_county %>%
                 dplyr::everything())
 
 
-## 9. Write data to directory ----
+## 9. Filter ahrf_subset to only include fips codes that start with 06 ----
+ahrf_subset <- ahrf_subset %>%
+  dplyr::filter(stringr::str_detect(fips, "^06"))
+
+## 10. Write data to directory ----
 readr::write_csv(ahrf_subset,
                  here::here("derived_data", "ahrf_subset.csv"))
 ## Writing data dictionary to directory
