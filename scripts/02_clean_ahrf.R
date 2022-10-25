@@ -117,7 +117,6 @@ ahrf_list <- c(
   "n_hospital_beds_2017" = "F08921-17",
   "n_hospitals_2017" = "F08868-17",
   "n_active_mds_2017" = "F08857-17",
-  "n_hospital_admissions_2017" = "F08909-17",
   "n_medicare_bene_2017" = "F15288-17",
   "n_medicare_eligible_2018" = "F13191-18",
   #SDoH vars
