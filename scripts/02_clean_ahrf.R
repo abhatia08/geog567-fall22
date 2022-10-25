@@ -112,8 +112,26 @@ ahrf_list <- c(
   "fips_st" = "F00011",
   "fips_ct" = "F00012",
   "name" = "F00010",
+  "n_pop_2017" = "F13182-17",
+  # Health system data
+  "n_hospital_beds_2017" = "F08921-17",
+  "n_hospitals_2017" = "F08868-17",
+  "n_active_mds_2017" = "F08857-17",
+  "n_hospital_admissions_2017" = "F08909-17",
+  "n_medicare_bene_2017" = "F15288-17",
+  "n_medicare_eligible_2018" = "F13191-18",
+  #SDoH vars
   "n_people_below_poverty_level_2017" =  "F14419-13",
-  "n_pop_2017" = "F13182-17"
+  # Health data
+  "n_deaths_resp_1517" = "F11936-15",
+  "n_deaths_resp_1416" = "F11936-14",
+  "n_deaths_resp_1315" = "F11936-13",
+  "n_deaths_resp_0810" = "F11936-08",
+  "n_ed_visits_st_hosp_2017" = "F09572-17",
+  "n_ed_visits_other_hosp_2017" = "F09574-17",
+  "n_hosp_admissions_2017" = "F08909-17",
+  "n_outpatient_visits_st_gen_hosp_2017" = "F09566-17",
+  "n_outpatient_visits_va_hosp_2017" = "F09571-17"
 )
 
 ahrf_subset <- ahrf_county %>%
