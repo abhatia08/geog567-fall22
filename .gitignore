@@ -62,3 +62,4 @@ figures/*
 # bash history
 .bash_history
 
+*.xlsx
