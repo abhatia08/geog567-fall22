@@ -1,5 +1,4 @@
 
-HELP
 ## Spatial Analysis of the Effects of Wildfires on Short- and Long-Term Health  in California using Google Earth Engine
 
 This repository contains data and scripts used for the final project of [GEOG 567- Introduction to Remote Sensing](https://catalog.unc.edu/courses/geog/), at the University of North Carolina at Chapel Hill  
