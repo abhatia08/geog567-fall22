@@ -14,6 +14,8 @@ library(tidycensus)
 library(labelled)
 
 ## 2. Declare `here`
+# wd for amy
+# setwd("geog567-fall22")
 here::i_am("scripts/02_clean_ahrf.R")
 
 ## 3. Run Util.R ----
