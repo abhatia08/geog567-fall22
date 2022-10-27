@@ -63,3 +63,6 @@ figures/*
 .bash_history
 
 *.xlsx
+scripts/02_clean_ahrf.R
+source_data/asthma-emergency-department-visit-rates-by-county-2015_2019.csv
+source_data/asthma-deaths-by-county-2014_2019.csv
