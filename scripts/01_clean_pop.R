@@ -58,7 +58,8 @@ orig_pop_df <-
       "pop"
     )
   ))  %>%
-  dplyr::filter(year == 2018, month == 7)
+  dplyr::filter(year == 2018, month == 7) %>%
+  dplyr::filter(stringr::str_detect(fips, "^06"))
 
 pop_df <- orig_pop_df %>%
   dplyr::select(age, fips, pop) %>%
@@ -73,9 +74,18 @@ pop_df <- orig_pop_df %>%
   dplyr::summarize(pop = sum(pop)) %>%
   dplyr::ungroup()
 
-## 3. Write population data to directory ----
-readr::write_csv(pop_df,
-                 here::here("derived_data", "population_by_age.csv"))
+## 3. Create population counts ----
+pop_wide <- pop_df %>%
+  tidyr::spread(age, pop, sep = "") %>% dplyr::mutate(
+    n_pop_2018 = age0 + age5 + age10 + age15 + age20 +
+      age25 + age30 + age35 + age40 + age45 + age50 +
+      age55 + age60 + age65 + age70 + age75 + age80 +
+      age85
+  ) %>% dplyr::mutate(p65older = ((age65 + age70 + age75 + age80 +
+                                     age85) * 100 / n_pop_2018)) %>%
+  dplyr::mutate(p5younger = ((age5 + age0) * 100 / n_pop_2018)) %>%
+  select(c(fips, n_pop_2018, p65older, p5younger))
+
 
 ## 4. Get percentage of non-NHW population ----
 nhw_df <- orig_pop_df %>%
@@ -103,11 +113,11 @@ nonwhite_df <- pop_df %>%
     p_white = nhw_pop / pop * 100
   )
 
-## 5. Filter data to FIPS codes that start with 06  ----
-nonwhite_df <- nonwhite_df %>%
-  dplyr::filter(stringr::str_detect(fips, "^06"))
+## 5. Left Join nonwhite_df to pop_wide by fips code ----
+pop_df <- pop_wide %>%
+  dplyr::left_join(nonwhite_df, by = "fips")
 
 ## 6. Write data to directory ----
-readr::write_csv(nonwhite_df,
+readr::write_csv(pop_df,
                  here::here("derived_data",
-                            "percent_nonwhite_pop.csv"))
+                            "pop_data.csv"))
