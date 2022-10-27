@@ -48,10 +48,27 @@ raw_df1 <-
 ### 3. Clean the data ----
 clean_df1 <- raw_df1 %>%
   clean_names() %>%
-  select(-c(counties_grouped, x95_percent_confidence_interval, comment))
+  filter(strata != "Child vs. adult") %>%
+  filter(age_group == "All ages") %>%
+  filter(county != "California") %>% 
+  select(-c(
+    counties_grouped,
+    x95_percent_confidence_interval,
+    comment,
+    strata,
+    age_group
+  )) %>%
+  rename(asthma_prevalence = lifetime_prevalence) 
+
+### 4. Pivot the data from long to wide ----
+clean_df1 <- clean_df1 %>%
+  pivot_wider(names_from = years,
+              values_from = asthma_prevalence) %>%
+  clean_names() %>%
+  rename(asthma_prev_1516 = x2015_2016, asthma_prev_1718 = x2017_2018)
 
 
-### 4. Write prevalence data to directory ----
+### 5. Write prevalence data to directory ----
 readr::write_csv(clean_df1,
                  here::here("derived_data", "asthma_prevalence.csv"))
 
@@ -60,31 +77,37 @@ readr::write_csv(clean_df1,
 ### 1. Download the data ----
 curl::curl_download(
   url = "https://data.chhs.ca.gov/dataset/5ea28f96-7bb6-4c18-9c0d-020484fab181/resource/0fe2c650-e4e2-4de8-b2aa-5a14e01e9e61/download/asthma-deaths-by-county-2014_2019.csv",
-  destfile = here::here(
-    "source_data",
-    "asthma-deaths-by-county-2014_2019.csv"
-  )
+  destfile = here::here("source_data",
+                        "asthma-deaths-by-county-2014_2019.csv")
 )
 
 ### 2. Read in downloaded csv file----
 raw_df2 <-
   read_csv(
-    here::here(
-      "source_data",
-      "asthma-deaths-by-county-2014_2019.csv"
-    ),
+    here::here("source_data",
+               "asthma-deaths-by-county-2014_2019.csv"),
     locale = locale(encoding = "UTF-8")
   )
 
 ### 3. Clean the data ----
 clean_df2 <- raw_df2 %>%
-  clean_names() %>% 
-  select(-c(comment))
+  clean_names() %>%
+  filter(strata != "Child vs. adult") %>%
+  filter(age_group == "All ages") %>%
+  filter(county != "California") %>% 
+  select(-c(comment, strata, age_group, number_of_deaths))
 
-## Remove the \x96 string from years column ----
+### Remove the \x96 string from years column
 clean_df2$years <- gsub("\x96", "-", clean_df2$years)
 
-### 4. Write death data to directory ----
+### 4. Pivot the data from long to wide ----
+clean_df2 <- clean_df2 %>%
+  pivot_wider(names_from = years,
+              values_from = age_adjusted_mortality_rate) %>%
+  clean_names() %>%
+  rename(asthma_mort_1416 = x2014_2016, asthma_mort_1719 = x2017_2019)
+
+### 5. Write death data to directory ----
 readr::write_csv(clean_df2,
                  here::here("derived_data", "asthma_deaths.csv"))
 
@@ -110,18 +133,22 @@ raw_df3 <-
 
 ### 3. Clean the data ----
 clean_df3 <- raw_df3 %>%
-  clean_names() %>% 
-  filter(strata != "Child vs. adult") %>%  
-  filter(age_group == "All ages") %>% 
-  select(-c(comment))
+  clean_names() %>%
+  filter(strata == "Total population") %>%
+  filter(age_group == "All ages") %>%
+  filter(county != "California") %>%
+  select(-c(comment, strata, age_group, number_of_ed_visits, strata_name)) %>%
+  rename(years = year)
 
+### 4. Pivot the data from long to wide ----
+clean_df3 <- clean_df3 %>%
+  pivot_wider(names_from = years,
+              values_from = age_adjusted_ed_visit_rate) %>%
+  clean_names() 
 
-## Remove the \x96 string from years column ----
-clean_df3$years <- gsub("\x96", "-", clean_df3$years)
+colnames(clean_df3) <- gsub("x", "asthma_edrate_", colnames(clean_df3))
 
-### 4. Write ED visit data to directory ----
+### 5. Write ED visit data to directory ----
 readr::write_csv(clean_df3,
                  here::here("derived_data", "asthma_hospitalization.csv"))
-
-
 
