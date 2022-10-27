@@ -15,31 +15,38 @@ library(tmap)
 
 ```{r}
 #read in county fire average days data
-county_data_days <- read_csv("County_Fire_Average_10242022.csv")
+county_data_days <- read_csv("../source_data/GEE_output/FireDaysAverage_10252022.csv")
+
+#read in county average ratio burned
+county_data_burnedarea <- read_csv("../source_data/GEE_output/CountyBurnAverage_10252022.csv")
+
 #read in county fire average intensity data
-county_data_intensity <- read_csv("County_Fire_Intensity_10242022.csv")
+county_data_intensity <- read_csv("../source_data/GEE_output/County_Fire_Intensity_10242022.csv")
+
 #read in aerosol data
-county_aerosol_data <- read_csv("Aerosol_Optical_Depth_10242022.csv")
+county_aerosol_data <- read_csv("../source_data/GEE_output/Aerosol_Optical_Depth_10242022.csv")
 
 #read in county shapefile 
-CA_county <- st_read("../CA_Counties/CA_Counties_TIGER2016.shp")
+CA_county <- st_read("../source_data/CA_Counties/CA_Counties_TIGER2016.shp")
 
 county_data_days <- rename(county_data_days, mean_days = mean)
+county_data_burnedarea <- rename(county_data_burnedarea, burned_ratio = mean)
 county_data_intensity <- rename(county_data_intensity, mean_intensity = mean)
 county_aerosol_data <- rename(county_aerosol_data, mean_aerosol = mean)
 
-merged_data_fire <- merge(county_data_days, county_data_intensity, by = c("GEOID", "year"))
+merged_data_fire <- merge(county_data_days, county_data_burnedarea, by = c("GEOID", "year"))
+merged_data_fire <- merge(merged_data_fire, county_data_intensity, by = c("GEOID", "year"))
 
 merged_data_full <- merge(merged_data_fire, county_aerosol_data, by = c("GEOID", "year"))
 
-grouped_data <- merged_data_full %>% group_by(GEOID) %>% summarise(mean_days = mean(mean_days), mean_intensity = mean(mean_intensity), mean_aerosol = mean(mean_aerosol))
+grouped_data <- merged_data_full %>% group_by(GEOID) %>% summarise(mean_days = mean(mean_days), mean_intensity = mean(mean_intensity), mean_aerosol = mean(mean_aerosol), burned_ratio = mean(burned_ratio))
 
 grouped_data$upd_geoid <- paste0("0", as.character(grouped_data$GEOID))
 CA_county_merged <- merge(CA_county, grouped_data, by.x = "GEOID", by.y = "upd_geoid")
 
 tmap_mode("view")
 
-tm_shape(CA_county_merged) + tm_polygons("mean_aerosol", style = "jenks")
+tm_shape(CA_county_merged) + tm_polygons("burned_ratio", style = "jenks")
 
 ```
 
