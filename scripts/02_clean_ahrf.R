@@ -14,8 +14,6 @@ library(tidycensus)
 library(labelled)
 
 ## 2. Declare `here`
-# wd for amy
-# setwd("geog567-fall22")
 here::i_am("scripts/02_clean_ahrf.R")
 
 ## 3. Run Util.R ----
@@ -108,8 +106,9 @@ for (s in unique(ahrf_county_layout$scaling_factor)) {
   }
 }
 
+
 ## 8. Subset data to keep relevant variables ----
-## Note: This subset of variables should be build on as the analysis gets deeper. 
+## Note: This subset of variables should be build on as the analysis gets deeper.
 ahrf_list <- c(
   "fips_st" = "F00011",
   "fips_ct" = "F00012",
@@ -144,17 +143,14 @@ ahrf_subset <- ahrf_county %>%
   dplyr::ungroup() %>%
   dplyr::mutate(p_poverty = ((100 * n_people_below_poverty_level_2017) /
                                n_pop_2017)) %>%
-  dplyr::select(-fips_st,
-                -fips_ct,
-                -n_people_below_poverty_level_2017,
-                -n_pop_2017) %>%
+  dplyr::select(-fips_st,-fips_ct,-n_people_below_poverty_level_2017,-n_pop_2017) %>%
   dplyr::select(fips,
                 name,
                 dplyr::everything())
 
 
-## 9. Filter ahrf_subset to only include fips codes that start with 06 ----
-ahrf_subset <- ahrf_subset %>%
+## 9. Filter ahrf_county to only include fips codes that start with 06 ----
+ahrf_county <- ahrf_county %>%
   dplyr::filter(stringr::str_detect(fips, "^06"))
 
 ## 10. Write data to directory ----
