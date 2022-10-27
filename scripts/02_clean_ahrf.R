@@ -106,8 +106,12 @@ for (s in unique(ahrf_county_layout$scaling_factor)) {
   }
 }
 
+## 8. Filter ahrf_county to only include fips codes that start with 06 ----
+ahrf_county <- ahrf_county %>%
+  dplyr::filter(stringr::str_detect(F00011, "06"))
 
-## 8. Subset data to keep relevant variables ----
+
+## 9. Subset data to keep relevant variables ----
 ## Note: This subset of variables should be build on as the analysis gets deeper.
 ahrf_list <- c(
   "fips_st" = "F00011",
@@ -125,17 +129,13 @@ ahrf_list <- c(
   # Health data
   "n_deaths_resp_1517" = "F11936-15",
   "n_deaths_resp_1416" = "F11936-14",
-  "n_deaths_resp_1315" = "F11936-13",
-  "n_deaths_resp_0810" = "F11936-08",
-  "n_ed_visits_st_hosp_2017" = "F09572-17",
-  "n_ed_visits_other_hosp_2017" = "F09574-17",
-  "n_hosp_admissions_2017" = "F08909-17",
-  "n_outpatient_visits_st_gen_hosp_2017" = "F09566-17",
-  "n_outpatient_visits_va_hosp_2017" = "F09571-17"
+  "n_deaths_resp_1315" = "F11936-13"
 )
 
 ahrf_subset <- ahrf_county %>%
-  dplyr::select(ahrf_list) %>%
+  dplyr::select(ahrf_list) 
+
+ahrf_subset <- ahrf_subset %>% 
   dplyr::mutate(fips = paste0(fips_st, fips_ct)) %>%
   dplyr::group_by(fips, name) %>%
   dplyr::mutate_at(dplyr::vars(-dplyr::group_cols()), function(x)
@@ -143,15 +143,10 @@ ahrf_subset <- ahrf_county %>%
   dplyr::ungroup() %>%
   dplyr::mutate(p_poverty = ((100 * n_people_below_poverty_level_2017) /
                                n_pop_2017)) %>%
-  dplyr::select(-fips_st,-fips_ct,-n_people_below_poverty_level_2017,-n_pop_2017) %>%
+  dplyr::select(-fips_st,-fips_ct,-n_people_below_poverty_level_2017) %>%
   dplyr::select(fips,
                 name,
                 dplyr::everything())
-
-
-## 9. Filter ahrf_county to only include fips codes that start with 06 ----
-ahrf_county <- ahrf_county %>%
-  dplyr::filter(stringr::str_detect(fips, "^06"))
 
 ## 10. Write data to directory ----
 readr::write_csv(ahrf_subset,
