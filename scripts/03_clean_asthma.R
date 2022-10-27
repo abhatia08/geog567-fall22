@@ -68,11 +68,6 @@ clean_df1 <- clean_df1 %>%
   rename(asthma_prev_1516 = x2015_2016, asthma_prev_1718 = x2017_2018)
 
 
-### 5. Write prevalence data to directory ----
-readr::write_csv(clean_df1,
-                 here::here("derived_data", "asthma_prevalence.csv"))
-
-
 ## 3.2. Death Data ----
 ### 1. Download the data ----
 curl::curl_download(
@@ -107,9 +102,6 @@ clean_df2 <- clean_df2 %>%
   clean_names() %>%
   rename(asthma_mort_1416 = x2014_2016, asthma_mort_1719 = x2017_2019)
 
-### 5. Write death data to directory ----
-readr::write_csv(clean_df2,
-                 here::here("derived_data", "asthma_deaths.csv"))
 
 ## 3.3. ED Visit Data ----
 ### 1. Download the data ----
@@ -148,7 +140,14 @@ clean_df3 <- clean_df3 %>%
 
 colnames(clean_df3) <- gsub("x", "asthma_edrate_", colnames(clean_df3))
 
-### 5. Write ED visit data to directory ----
-readr::write_csv(clean_df3,
-                 here::here("derived_data", "asthma_hospitalization.csv"))
+## 3.4. Merged Asthma Dataset ----
 
+### 1. Left Join all data ----
+asthma_df <- clean_df1 %>%
+  left_join(clean_df2, by = "county") %>%
+  left_join(clean_df3, by = "county")
+
+
+### 2. Write data to directory ----
+readr::write_csv(asthma_df,
+                 here::here("derived_data", "asthma_df.csv"))
