@@ -24,7 +24,7 @@ county_data_burnedarea <- read_csv("../source_data/GEE_output/CountyBurnAverage_
 county_data_intensity <- read_csv("../source_data/GEE_output/County_Fire_Intensity_10242022.csv")
 
 #read in aerosol data
-county_aerosol_data <- read_csv("../source_data/GEE_output/Aerosol_Optical_Depth_10242022.csv")
+county_aerosol_data <- read_csv("../source_data/GEE_output/MCD_Aerosol_Optical_Depth_11032022.csv")
 
 #read in county shapefile 
 CA_county <- st_read("../source_data/CA_Counties/CA_Counties_TIGER2016.shp")
@@ -36,8 +36,10 @@ county_aerosol_data <- rename(county_aerosol_data, mean_aerosol = mean)
 
 merged_data_fire <- merge(county_data_days, county_data_burnedarea, by = c("GEOID", "year"))
 merged_data_fire <- merge(merged_data_fire, county_data_intensity, by = c("GEOID", "year"))
-
 merged_data_full <- merge(merged_data_fire, county_aerosol_data, by = c("GEOID", "year"))
+merged_data_full$upd_geoid <- paste0("0", as.character(merged_data_full$GEOID))
+merged_data_full <- merged_data_full[,2:7]
+write_csv(merged_data_full, "GEE_county_data_11082022.csv")
 
 grouped_data <- merged_data_full %>% group_by(GEOID) %>% summarise(mean_days = mean(mean_days), mean_intensity = mean(mean_intensity), mean_aerosol = mean(mean_aerosol), burned_ratio = mean(burned_ratio))
 
