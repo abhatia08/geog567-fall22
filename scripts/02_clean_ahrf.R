@@ -125,11 +125,7 @@ ahrf_list <- c(
   "n_medicare_bene_2017" = "F15288-17",
   "n_medicare_eligible_2018" = "F13191-18",
   #SDoH vars
-  "n_people_below_poverty_level_2017" =  "F14419-13",
-  # Health data
-  "n_deaths_resp_1517" = "F11936-15",
-  "n_deaths_resp_1416" = "F11936-14",
-  "n_deaths_resp_1315" = "F11936-13"
+  "n_people_below_poverty_level_2017" =  "F14419-13"
 )
 
 ahrf_subset <- ahrf_county %>%
@@ -143,7 +139,7 @@ ahrf_subset <- ahrf_subset %>%
   dplyr::ungroup() %>%
   dplyr::mutate(p_poverty = ((100 * n_people_below_poverty_level_2017) /
                                n_pop_2017)) %>%
-  dplyr::select(-fips_st,-fips_ct,-n_people_below_poverty_level_2017) %>%
+  dplyr::select(-fips_st,-fips_ct,-n_people_below_poverty_level_2017, -n_pop_2017) %>%
   dplyr::select(fips,
                 name,
                 dplyr::everything())
