@@ -51,7 +51,7 @@ clean_df1 <- raw_df1 %>%
   filter(strata != "Child vs. adult") %>%
   filter(age_group == "All ages") %>%
   filter(county != "California") %>% 
-  select(-c(
+  dplyr::select(-c(
     counties_grouped,
     x95_percent_confidence_interval,
     comment,
@@ -90,7 +90,7 @@ clean_df2 <- raw_df2 %>%
   filter(strata != "Child vs. adult") %>%
   filter(age_group == "All ages") %>%
   filter(county != "California") %>% 
-  select(-c(comment, strata, age_group, number_of_deaths))
+  dplyr::select(-c(comment, strata, age_group, number_of_deaths))
 
 ### Remove the \x96 string from years column
 clean_df2$years <- gsub("\x96", "-", clean_df2$years)
@@ -129,7 +129,7 @@ clean_df3 <- raw_df3 %>%
   filter(strata == "Total population") %>%
   filter(age_group == "All ages") %>%
   filter(county != "California") %>%
-  select(-c(comment, strata, age_group, number_of_ed_visits, strata_name)) %>%
+  dplyr::select(-c(comment, strata, age_group, number_of_ed_visits, strata_name)) %>%
   rename(years = year)
 
 ### 4. Pivot the data from long to wide ----
