@@ -129,9 +129,9 @@ ahrf_list <- c(
 )
 
 ahrf_subset <- ahrf_county %>%
-  dplyr::select(ahrf_list) 
+  dplyr::select(ahrf_list)
 
-ahrf_subset <- ahrf_subset %>% 
+ahrf_subset <- ahrf_subset %>%
   dplyr::mutate(fips = paste0(fips_st, fips_ct)) %>%
   dplyr::group_by(fips, name) %>%
   dplyr::mutate_at(dplyr::vars(-dplyr::group_cols()), function(x)
@@ -139,7 +139,27 @@ ahrf_subset <- ahrf_subset %>%
   dplyr::ungroup() %>%
   dplyr::mutate(p_poverty = ((100 * n_people_below_poverty_level_2017) /
                                n_pop_2017)) %>%
-  dplyr::select(-fips_st,-fips_ct,-n_people_below_poverty_level_2017, -n_pop_2017) %>%
+  dplyr::mutate(p_medicare_bene1000 = ((1000 * n_medicare_bene_2017) /
+                                         n_pop_2017)) %>%
+  dplyr::mutate(p_medicare_elig1000 = ((1000 * n_medicare_eligible_2018) /
+                                         n_pop_2017)) %>%
+  dplyr::mutate(p_bedsper1000 = ((1000 * n_hospital_beds_2017) /
+                                   n_pop_2017)) %>%
+  dplyr::mutate(p_hosp_permil = ((100000 * n_hospitals_2017) /
+                                n_pop_2017)) %>%
+  dplyr::mutate(p_mds1000 = ((1000 * n_active_mds_2017) /
+                               n_pop_2017)) %>%
+  dplyr::select(
+    -fips_st,
+    -fips_ct,
+    -n_people_below_poverty_level_2017,
+    -n_pop_2017,
+    -n_medicare_bene_2017,
+    -n_medicare_eligible_2018,
+    -n_hospitals_2017,
+    -n_hospital_beds_2017,
+    -n_active_mds_2017
+  ) %>%
   dplyr::select(fips,
                 name,
                 dplyr::everything())
