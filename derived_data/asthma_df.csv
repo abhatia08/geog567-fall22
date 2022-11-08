@@ -1,59 +1,291 @@
-county,asthma_prev_1516,asthma_prev_1718,asthma_mort_1416,asthma_mort_1719,asthma_edrate_2015,asthma_edrate_2016,asthma_edrate_2017,asthma_edrate_2018,asthma_edrate_2019
-Alameda,0.142955,0.13780599999999998,11.2,12,64.3,57.8,56.3,48.6,45.8
-Alpine,0.141582,0.186113,0,0,0,NA,0,NA,NA
-Amador,0.141582,0.186113,0,NA,58.4,61.8,56.8,44.3,53.2
-Butte,0.146952,0.155327,NA,NA,50.2,38.1,45.3,42.2,35.5
-Calaveras,0.141582,0.186113,NA,NA,48,45.3,55.1,52.3,58.4
-Colusa,0.139653,0.148736,NA,0,41.4,29.6,28.4,53.6,45.4
-Contra Costa,0.20685199999999998,0.17458100000000001,10.6,11,65.2,56.8,62.6,55.4,54.2
-Del Norte,0.146481,0.191191,NA,0,53,71.1,61.2,53.6,48.9
-El Dorado,0.251622,0.132716,NA,NA,36.4,35.5,40.5,34.1,33.7
-Fresno,0.16344799999999998,0.19772099999999998,14.5,19.5,77,67.4,75.4,67,63.1
-Glenn,0.139653,0.148736,NA,NA,42.6,36.3,45.6,35.9,39.6
-Humboldt,0.181368,0.17313199999999998,NA,NA,63.4,64.5,67.1,53.4,48
-Imperial,0.151452,0.147319,NA,NA,71.2,66.3,65.7,58.1,60.2
-Inyo,0.141582,0.186113,0,NA,53.5,53.7,70.7,49.2,58.1
-Kern,0.237465,0.160048,9.3,10.5,62.3,54.5,52.2,46.2,46.1
-Kings,0.266603,0.18382,NA,NA,78.6,65,67.9,53.7,47.9
-Lake,0.214113,0.152447,NA,NA,80.4,79.4,80.1,86.7,89.8
-Lassen,0.146481,0.191191,0,NA,45.3,40.7,44,37.9,35.2
-Los Angeles,0.126718,0.146004,9.8,8.2,53.1,51.5,50,47.1,47.1
-Madera,0.171466,0.154946,NA,NA,62.3,60.2,61.7,50.9,49.1
-Marin,0.107576,0.140934,NA,NA,22.2,23.1,23.5,24.3,22.6
-Mariposa,0.141582,0.186113,0,0,47.4,45.3,46.5,48,37.1
-Mendocino,0.165254,0.135442,NA,NA,57.4,56.4,70.9,62.4,60
-Merced,0.183963,0.139325,21.6,19.8,87.4,79.2,73.9,60,59.4
-Modoc,0.146481,0.191191,NA,NA,67.9,80.1,106,109.3,90.8
-Mono,0.141582,0.186113,NA,0,32,28.1,32,54.9,46.5
-Monterey,0.12418699999999999,0.137318,14.2,10.5,50.2,44.3,43.1,36.3,36.4
-Napa,0.20052499999999998,0.205664,NA,NA,41.9,33.5,40.2,37.4,36.8
-Nevada,0.107217,0.155129,NA,NA,42.8,33.6,38.5,26.1,27.2
-Orange,0.127687,0.11878999999999999,5.5,7.4,33.9,29.2,29.7,26.5,26.9
-Placer,0.1476,0.159505,NA,NA,31.4,28.3,34.7,33,29.8
-Plumas,0.146481,0.191191,NA,NA,56.3,61.4,63.2,61.5,53.4
-Riverside,0.155448,0.15659900000000002,8.5,6.7,43.2,41.5,43.2,37.9,39
-Sacramento,0.18810300000000002,0.20164100000000001,14.1,14.1,69.2,60.7,68.6,64.5,59.4
-San Benito,0.13364499999999999,0.149841,NA,NA,50.1,48.7,61.2,56.7,60.6
-San Bernardino,0.159193,0.154217,12.5,10.3,59.3,51.9,51.4,47.4,49.5
-San Diego,0.140506,0.145649,6.5,6.2,37,30.9,31.7,28.7,29.8
-San Francisco,0.149641,0.127316,6.8,4.9,41.3,38.5,41.7,36.1,33.2
-San Joaquin,0.143244,0.228402,15.4,10.6,66.2,57.5,65.9,60.5,57.9
-San Luis Obispo,0.111327,0.130072,NA,NA,40.1,38.1,33.3,28.3,31.1
-San Mateo,0.180188,0.165078,11.2,4.2,36.4,32.5,31.8,27.5,25.9
-Santa Barbara,0.130145,0.15181699999999998,NA,NA,40.7,37.7,33.5,27.5,27.8
-Santa Clara,0.117076,0.147944,11.1,7.6,35.1,29.1,30.7,26.4,23.9
-Santa Cruz,0.192422,0.160291,NA,NA,36.5,34.4,29.8,27.9,29.4
-Shasta,0.120587,0.125995,NA,NA,60.5,46.4,45.3,38.6,39.8
-Sierra,0.146481,0.191191,0,0,NA,NA,NA,52.5,NA
-Siskiyou,0.146481,0.191191,NA,NA,47,33.7,42.1,34.1,40.4
-Solano,0.21437699999999998,0.225627,14.4,15.2,83.2,80.8,91.7,79.6,70.1
-Sonoma,0.163483,0.17979900000000001,5.9,11.3,40.2,36.6,41.6,38,31.5
-Stanislaus,0.187961,0.17095300000000002,13,14.2,60.7,51.3,56.6,52.8,52
-Sutter,0.18394100000000002,0.25294,NA,NA,34.1,33.7,31.7,29.9,27.8
-Tehama,0.139653,0.148736,0,NA,52.7,55.9,59.7,48,47
-Trinity,0.146481,0.191191,0,NA,60.5,52.7,50.1,60.1,43
-Tulare,0.147035,0.201017,12,11.5,51.3,40.5,43.4,32.2,40.2
-Tuolumne,0.141582,0.186113,NA,NA,53.1,46.9,53.6,47.5,44
-Ventura,0.151093,0.119428,8.7,5.8,35.3,32.4,34.8,30.4,29.8
-Yolo,0.17173100000000002,0.19410799999999998,NA,NA,44.1,38.4,43.3,38.9,34.5
-Yuba,0.20166,0.181755,NA,NA,45.4,39.2,47.9,43,42.3
+county,year,ed_rate
+Alameda,2015,64.3
+Alameda,2016,57.8
+Alameda,2017,56.3
+Alameda,2018,48.6
+Alameda,2019,45.8
+Alpine,2015,0
+Alpine,2016,NA
+Alpine,2017,0
+Alpine,2018,NA
+Alpine,2019,NA
+Amador,2015,58.4
+Amador,2016,61.8
+Amador,2017,56.8
+Amador,2018,44.3
+Amador,2019,53.2
+Butte,2015,50.2
+Butte,2016,38.1
+Butte,2017,45.3
+Butte,2018,42.2
+Butte,2019,35.5
+Calaveras,2015,48
+Calaveras,2016,45.3
+Calaveras,2017,55.1
+Calaveras,2018,52.3
+Calaveras,2019,58.4
+Colusa,2015,41.4
+Colusa,2016,29.6
+Colusa,2017,28.4
+Colusa,2018,53.6
+Colusa,2019,45.4
+Contra Costa,2015,65.2
+Contra Costa,2016,56.8
+Contra Costa,2017,62.6
+Contra Costa,2018,55.4
+Contra Costa,2019,54.2
+Del Norte,2015,53
+Del Norte,2016,71.1
+Del Norte,2017,61.2
+Del Norte,2018,53.6
+Del Norte,2019,48.9
+El Dorado,2015,36.4
+El Dorado,2016,35.5
+El Dorado,2017,40.5
+El Dorado,2018,34.1
+El Dorado,2019,33.7
+Fresno,2015,77
+Fresno,2016,67.4
+Fresno,2017,75.4
+Fresno,2018,67
+Fresno,2019,63.1
+Glenn,2015,42.6
+Glenn,2016,36.3
+Glenn,2017,45.6
+Glenn,2018,35.9
+Glenn,2019,39.6
+Humboldt,2015,63.4
+Humboldt,2016,64.5
+Humboldt,2017,67.1
+Humboldt,2018,53.4
+Humboldt,2019,48
+Imperial,2015,71.2
+Imperial,2016,66.3
+Imperial,2017,65.7
+Imperial,2018,58.1
+Imperial,2019,60.2
+Inyo,2015,53.5
+Inyo,2016,53.7
+Inyo,2017,70.7
+Inyo,2018,49.2
+Inyo,2019,58.1
+Kern,2015,62.3
+Kern,2016,54.5
+Kern,2017,52.2
+Kern,2018,46.2
+Kern,2019,46.1
+Kings,2015,78.6
+Kings,2016,65
+Kings,2017,67.9
+Kings,2018,53.7
+Kings,2019,47.9
+Lake,2015,80.4
+Lake,2016,79.4
+Lake,2017,80.1
+Lake,2018,86.7
+Lake,2019,89.8
+Lassen,2015,45.3
+Lassen,2016,40.7
+Lassen,2017,44
+Lassen,2018,37.9
+Lassen,2019,35.2
+Los Angeles,2015,53.1
+Los Angeles,2016,51.5
+Los Angeles,2017,50
+Los Angeles,2018,47.1
+Los Angeles,2019,47.1
+Madera,2015,62.3
+Madera,2016,60.2
+Madera,2017,61.7
+Madera,2018,50.9
+Madera,2019,49.1
+Marin,2015,22.2
+Marin,2016,23.1
+Marin,2017,23.5
+Marin,2018,24.3
+Marin,2019,22.6
+Mariposa,2015,47.4
+Mariposa,2016,45.3
+Mariposa,2017,46.5
+Mariposa,2018,48
+Mariposa,2019,37.1
+Mendocino,2015,57.4
+Mendocino,2016,56.4
+Mendocino,2017,70.9
+Mendocino,2018,62.4
+Mendocino,2019,60
+Merced,2015,87.4
+Merced,2016,79.2
+Merced,2017,73.9
+Merced,2018,60
+Merced,2019,59.4
+Modoc,2015,67.9
+Modoc,2016,80.1
+Modoc,2017,106
+Modoc,2018,109.3
+Modoc,2019,90.8
+Mono,2015,32
+Mono,2016,28.1
+Mono,2017,32
+Mono,2018,54.9
+Mono,2019,46.5
+Monterey,2015,50.2
+Monterey,2016,44.3
+Monterey,2017,43.1
+Monterey,2018,36.3
+Monterey,2019,36.4
+Napa,2015,41.9
+Napa,2016,33.5
+Napa,2017,40.2
+Napa,2018,37.4
+Napa,2019,36.8
+Nevada,2015,42.8
+Nevada,2016,33.6
+Nevada,2017,38.5
+Nevada,2018,26.1
+Nevada,2019,27.2
+Orange,2015,33.9
+Orange,2016,29.2
+Orange,2017,29.7
+Orange,2018,26.5
+Orange,2019,26.9
+Placer,2015,31.4
+Placer,2016,28.3
+Placer,2017,34.7
+Placer,2018,33
+Placer,2019,29.8
+Plumas,2015,56.3
+Plumas,2016,61.4
+Plumas,2017,63.2
+Plumas,2018,61.5
+Plumas,2019,53.4
+Riverside,2015,43.2
+Riverside,2016,41.5
+Riverside,2017,43.2
+Riverside,2018,37.9
+Riverside,2019,39
+Sacramento,2015,69.2
+Sacramento,2016,60.7
+Sacramento,2017,68.6
+Sacramento,2018,64.5
+Sacramento,2019,59.4
+San Benito,2015,50.1
+San Benito,2016,48.7
+San Benito,2017,61.2
+San Benito,2018,56.7
+San Benito,2019,60.6
+San Bernardino,2015,59.3
+San Bernardino,2016,51.9
+San Bernardino,2017,51.4
+San Bernardino,2018,47.4
+San Bernardino,2019,49.5
+San Diego,2015,37
+San Diego,2016,30.9
+San Diego,2017,31.7
+San Diego,2018,28.7
+San Diego,2019,29.8
+San Francisco,2015,41.3
+San Francisco,2016,38.5
+San Francisco,2017,41.7
+San Francisco,2018,36.1
+San Francisco,2019,33.2
+San Joaquin,2015,66.2
+San Joaquin,2016,57.5
+San Joaquin,2017,65.9
+San Joaquin,2018,60.5
+San Joaquin,2019,57.9
+San Luis Obispo,2015,40.1
+San Luis Obispo,2016,38.1
+San Luis Obispo,2017,33.3
+San Luis Obispo,2018,28.3
+San Luis Obispo,2019,31.1
+San Mateo,2015,36.4
+San Mateo,2016,32.5
+San Mateo,2017,31.8
+San Mateo,2018,27.5
+San Mateo,2019,25.9
+Santa Barbara,2015,40.7
+Santa Barbara,2016,37.7
+Santa Barbara,2017,33.5
+Santa Barbara,2018,27.5
+Santa Barbara,2019,27.8
+Santa Clara,2015,35.1
+Santa Clara,2016,29.1
+Santa Clara,2017,30.7
+Santa Clara,2018,26.4
+Santa Clara,2019,23.9
+Santa Cruz,2015,36.5
+Santa Cruz,2016,34.4
+Santa Cruz,2017,29.8
+Santa Cruz,2018,27.9
+Santa Cruz,2019,29.4
+Shasta,2015,60.5
+Shasta,2016,46.4
+Shasta,2017,45.3
+Shasta,2018,38.6
+Shasta,2019,39.8
+Sierra,2015,NA
+Sierra,2016,NA
+Sierra,2017,NA
+Sierra,2018,52.5
+Sierra,2019,NA
+Siskiyou,2015,47
+Siskiyou,2016,33.7
+Siskiyou,2017,42.1
+Siskiyou,2018,34.1
+Siskiyou,2019,40.4
+Solano,2015,83.2
+Solano,2016,80.8
+Solano,2017,91.7
+Solano,2018,79.6
+Solano,2019,70.1
+Sonoma,2015,40.2
+Sonoma,2016,36.6
+Sonoma,2017,41.6
+Sonoma,2018,38
+Sonoma,2019,31.5
+Stanislaus,2015,60.7
+Stanislaus,2016,51.3
+Stanislaus,2017,56.6
+Stanislaus,2018,52.8
+Stanislaus,2019,52
+Sutter,2015,34.1
+Sutter,2016,33.7
+Sutter,2017,31.7
+Sutter,2018,29.9
+Sutter,2019,27.8
+Tehama,2015,52.7
+Tehama,2016,55.9
+Tehama,2017,59.7
+Tehama,2018,48
+Tehama,2019,47
+Trinity,2015,60.5
+Trinity,2016,52.7
+Trinity,2017,50.1
+Trinity,2018,60.1
+Trinity,2019,43
+Tulare,2015,51.3
+Tulare,2016,40.5
+Tulare,2017,43.4
+Tulare,2018,32.2
+Tulare,2019,40.2
+Tuolumne,2015,53.1
+Tuolumne,2016,46.9
+Tuolumne,2017,53.6
+Tuolumne,2018,47.5
+Tuolumne,2019,44
+Ventura,2015,35.3
+Ventura,2016,32.4
+Ventura,2017,34.8
+Ventura,2018,30.4
+Ventura,2019,29.8
+Yolo,2015,44.1
+Yolo,2016,38.4
+Yolo,2017,43.3
+Yolo,2018,38.9
+Yolo,2019,34.5
+Yuba,2015,45.4
+Yuba,2016,39.2
+Yuba,2017,47.9
+Yuba,2018,43
+Yuba,2019,42.3

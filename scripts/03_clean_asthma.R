@@ -147,6 +147,18 @@ asthma_df <- clean_df1 %>%
   left_join(clean_df2, by = "county") %>%
   left_join(clean_df3, by = "county")
 
+### 2. Only retain ED rates and pivot to Long ----
+asthma_df <- asthma_df %>%
+  pivot_longer(
+    cols = c(
+      "asthma_edrate_2015", "asthma_edrate_2016", "asthma_edrate_2017", "asthma_edrate_2018", "asthma_edrate_2019"),
+               names_to = "year",
+               values_to = "ed_rate")
+
+asthma_df$year <- gsub("asthma_edrate_", "", asthma_df$year)
+
+asthma_df <- asthma_df[,-c(2:5)]
+
 
 ### 2. Write data to directory ----
 readr::write_csv(asthma_df,
