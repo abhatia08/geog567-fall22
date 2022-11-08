@@ -22,6 +22,7 @@ if (!dir.exists(here::here("derived_data"))) {
   source(here::here("scripts", "01_clean_pop.R"))
   source(here::here("scripts", "02_clean_ahrf.R"))
   source(here::here("scripts", "03_clean_asthma.R"))
+  source(here::here("scripts", "04_clean_gee.R"))
 }
 
 # 01. MERGING CLEANED DATA ----
