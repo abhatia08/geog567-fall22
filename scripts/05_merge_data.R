@@ -33,3 +33,24 @@ pop_df <- read_csv(here::here("derived_data", "pop_data.csv"))
 ahrf_df <- read_csv(here::here("derived_data", "ahrf_subset.csv"))
 
 asthma_df <- read_csv(here::here("derived_data", "asthma_df.csv"))
+
+gee_df <-
+  read_csv(here::here("derived_data", "GEE_county_data_11082022.csv"))
+
+## 2. Left join everything to GEE data
+## Renaming to make it easier
+gee_df <-
+  gee_df %>% rename(fips = upd_geoid) %>% filter(year > 2014)
+asthma_df <- asthma_df %>% rename (name = county)
+
+analytic_df <- gee_df %>% left_join(ahrf_df, by = c("fips"))
+
+analytic_df <- analytic_df %>% left_join(pop_df, by = c("fips"))
+
+
+analytic_df <-
+  analytic_df %>% left_join(asthma_df, by = c("year", "name"))
+
+## 3. Write to directory ----
+readr::write_csv(analytic_df,
+                 here::here("derived_data", "analytic_df.csv"))
