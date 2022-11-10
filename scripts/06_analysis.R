@@ -32,7 +32,7 @@ if (!file.exists(here::here("derived_data", "analytic_df.csv"))) {
 # 06. ANALYSIS ----
 
 ## NOTE: If the models are not already trained, the chunk below will run to save the files. Else, it will load them in accordingly
-if (!file.exists(here::here("scripts", "xgboostmodel.RDS"))) {
+if (!file.exists(here::here("derived_data", "xgboostmodel.RDS"))) {
   ## 6.1 Pre-processing ----
   
   ### 1. Subset out years 2015-2019 for model training and keep 2020 for predictions ----
@@ -341,7 +341,6 @@ if (!file.exists(here::here("scripts", "xgboostmodel.RDS"))) {
 
 ### 1. Make predictions
 pred_df <- analytic_df[,-4]
-
 y_pred_rf = predict(rf_final_model, newdata = pred_df)
 y_pred_xgb = predict(xgb_model, pred_df)
 y_ens = (y_pred_rf + y_pred_xgb) / 2
@@ -351,11 +350,10 @@ predictions$edrate_pred <- round(y_ens, 1)
 
 
 ### 2. Reload data and join in predicted values, and sort
-predictions_df <-
-  read_csv(here::here("derived_data", "analytic_df.csv"))
 
 predictions_df <-
-  predictions_df %>% left_join(predictions, by = c("fips", "year", "name"))
+  analytic_df %>% left_join(predictions, by = c("fips", "year", "name")) 
+
 
 predictions_df$edrate_pred[predictions_df$name == "Alpine"] <-
   0 # Alpine is an anomaly with no hospitals
@@ -375,20 +373,4 @@ predictions_df <-
 ### 3. Write data
 readr::write_csv(analytic_df, here::here("derived_data", "predictions.csv"))
 
-## 6.6 Plots and figures ----
-
-#### 9. XGB Feature Importance ----
-xgb_features <- caret::varImp(xgb_model)
-
-png(here::here("figures", "xgbfeatureimp.png"),
-    width = 600,
-    height = 600)
-plot(xgb_features, top = 13)
-dev.off()
-
-png(here::here("figures", "rffeatureimp.png"),
-    width = 600,
-    height = 600)
-randomForest::varImpPlot(rf_final_model)
-dev.off()
 
