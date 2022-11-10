@@ -106,7 +106,7 @@ if (!file.exists(here::here("scripts", "xgboostmodel.RDS"))) {
     )
   
   #### 3, Save Random Forest to disk ----
-  save(rf_final_model, file = here::here("scripts", "rf_model.RData"))
+  save(rf_final_model, file = here::here("derived_data", "rf_model.RData"))
   
   #### 4. Make Predictions ----
   
@@ -328,12 +328,12 @@ if (!file.exists(here::here("scripts", "xgboostmodel.RDS"))) {
   xgb_benchmark <- xgb_test_rmse
   
   #### 8. Save xgboost model ----
-  saveRDS(xgb_model, here::here("scripts", "xgboostmodel.RDS"))
+  saveRDS(xgb_model, here::here("derived_data", "xgboostmodel.RDS"))
   
 } else {
-  xgb_model <- readRDS(here::here("scripts", "xgboostmodel.RDS"))
+  xgb_model <- readRDS(here::here("derived_data", "xgboostmodel.RDS"))
   # read in rf_model.RData as well
-  load(here::here("scripts", "rf_model.RData"))
+  load(here::here("derived_data", "rf_model.RData"))
   
 }
 ## 6.5 Final Predictions ----
