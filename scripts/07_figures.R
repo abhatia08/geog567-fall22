@@ -83,7 +83,9 @@ actual_map <- ggplot(df_2019_2020, aes(fill = edrate_actual_2019)) +
   scale_fill_viridis_c(option = "magma") +
   theme_bw() +
   labs(title = "Actual ED Rate in 2019", x = "", y = "") +
-  theme(legend.position = "none")
+  theme(legend.position = c(0.85, 0.8)) +
+  theme(legend.background = element_blank(),
+        legend.title = element_blank()) 
 
 ### Create a choropleth map of predicted ED rate in 2020 
 pred_map <- ggplot(df_2019_2020, aes(fill = edrate_pred_2020)) +
@@ -91,13 +93,14 @@ pred_map <- ggplot(df_2019_2020, aes(fill = edrate_pred_2020)) +
   scale_fill_viridis_c(option = "magma") +
   theme_bw() +
   labs(title = "Predicted ED Rate in 2020", x = "", y = "") +
-  theme(legend.position = "none")
+  theme(legend.position = c(0.85, 0.8)) +
+  theme(legend.background = element_blank(),
+        legend.title = element_blank()) 
 
-actual_map + predicted_map
+actual_map + pred_map
 
-# facet actual_map by year except 2020 ----
-actual_map + facet_wrap(~year, ncol = 1, scales = "free") +
-  theme(legend.position = "bottom")
+### 3d. Save combined plot in ---- 
+ggsave(here::here("figures", "2019vs2020pred.png"), width = 12, height = 8)
 
 ## 4. Choropleth of all SDoH variables
 ### 4a. Create a data frame with the relevant vars  ----
