@@ -13,5 +13,13 @@ ensure_directory <- function(directory) {
   }
 }
 
+# PLOTS -----
+
+## Tuneplot
+tuneplot <- function(x, probs = .90) {
+  ggplot(x) +
+    coord_cartesian(ylim = c(min(x$results$RMSE), quantile(x$results$RMSE, probs = probs))) +  theme_bw() + scale_y_reverse()
+}
+
 
 
