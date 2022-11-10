@@ -371,6 +371,6 @@ predictions_df <-
 
 
 ### 3. Write data
-readr::write_csv(analytic_df, here::here("derived_data", "predictions.csv"))
+readr::write_csv(predictions_df, here::here("derived_data", "predictions.csv"))
 
 
