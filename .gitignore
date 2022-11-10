@@ -50,8 +50,7 @@ source_data/__MACOSX
 source_data/AHRF_2018-2019
 source_data/0
 
-# figures
-figures/*
+
 
 # local and config files
 .local/*
