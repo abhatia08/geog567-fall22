@@ -242,125 +242,85 @@ rm(list = ls()[!ls() %in% c("analytic_df", "counties")])
 
 
 ## 3. Choropleth of predicted ED rate in 2020 against actual ED rates for 2015-2019 ----
-### 3a. Create a data frame with the county name, fips code, edrate_actual for the individual years 2015-2019 ----
-
+### 3a. Create a facet plot of actual values ----
 ### Subset analytic_df to only include 2015-2019
 df_actual <- analytic_df %>%
   filter(year %in% 2015:2019) %>%
+  mutate(edrate_actual = ifelse(edrate_actual == 0, NA, edrate_actual)) %>%  # This is done to stretch the palette.
   select(c("fips", "name", "year", "edrate_actual")) %>%
   left_join(counties, by = c("fips" = "GEOID"))
 
 
 ### Create a facet wrap by year, plotting actual ED rates using ggplot geom_sf
-df_actual %>%
+actual_plot <- df_actual %>%
   ggplot(aes(fill = edrate_actual, geometry = geometry)) +
   geom_sf() +
-  facet_wrap( ~ year) #+
-  # labs(title = "Actual ED Rates by County (2015-2019)",
-  #      fill = "ED Rate") +
-  # theme_bw() +
-  # theme(text = element_text(family = "serif"),
-  #       plot.title = element_text(hjust = 0.5)) +
-  # scale_fill_viridis_c(option = "magma", direction = -1) +
-  # guides(fill = guide_colorbar(title.position = "top")) +
-  # coord_sf(datum = NA)
-
-
-
-
-# # Create a vector of years from 2015-2019 
-# years <- 2015:2019
-# 
-# # For i in years, create a df_i 
-# for (i in years) {
-#   assign(paste0("df_", i),
-#          analytic_df %>% filter(year == i))
-# }
-# 
-# ### 3b. Create a data frame with the county name, fips code, edrate_predicted for only the year 2020 ----
-# df_2020 <- analytic_df %>%
-#   filter(year == 2020) %>%
-#   dplyr::select(c(name, fips, edrate_pred)) %>%
-#   rename(edrate_pred_2020 = edrate_pred)
-# 
-# # ### 3c. Merge all the data frames together ----
-# # df_edrate <- df_2015 %>%
-# #   left_join(df_2016, by = c("name", "fips")) %>%
-# #   left_join(df_2017, by = c("name", "fips")) %>%
-# #   left_join(df_2018, by = c("name", "fips")) %>%
-# #   left_join(df_2019, by = c("name", "fips")) %>%
-# #   left_join(df_2020, by = c("name", "fips"))
-# # 
-# ### 3d. Merge the data frame with the county shapefile ----
-# df_2015 <- counties %>%
-#   left_join(df_edrate, by = c("GEOID" = "fips"))
-# 
-# # ### 3e. Create maps for each year with actual rates ----
-# # actual_map <- function(year) {
-# #  ggplot(df_edrate, aes(fill = paste0("edrate_actual_", year))) +
-# #   geom_sf() +
-# #   scale_fill_viridis_c(option = "magma") +
-# #   theme_bw() +
-# #   labs(title = paste0("Actual ED Rate in ", year), x = "", y = "") +
-# #   theme(legend.position = c(0.85, 0.8)) +
-# #   theme(legend.background = element_blank(),
-# #         legend.title = element_blank())
-# # 
-# # }
-
-
-
-
-
-### Create actual_map function using tmap ----
-# actual_map <- function(year) {
-#   tmp <- df_edrate %>%
-#     dplyr::select(c("geometry", paste0("edrate_actual_", year))) %>%
-#     rename(edrate = paste0("edrate_actual_", year))
-#   
-#   tmap_mode("plot")
-#   tm_shape(tmp) +
-#     tm_polygons("edrate", style = "jenks", palette = "magma") 
-#     tm_layout(title = paste0(year),
-#               legend.position = c("right", "bottom"),
-#               legend.bg.color = "transparent",
-#               legend.title = element_blank())
-# }
-
-# actual_2015 <- 
-
-  tm_shape(df_edrate) +
-  tm_polygons("edrate_actual_2015", style = "jenks", palette = "magma") 
-  # tm_layout(
-  #   title = "Actual ED rate in 2015",
-  #   legend.position = c("right", "bottom"),
-  # #   legend.bg.color = "transparent"
-  # )
-
-# actual_2015 <- actual_map(2015)
-# actual_2016 <- actual_map(2016)
-# actual_2017 <- actual_map(2017)
-# actual_2018 <- actual_map(2018)
-# actual_2019 <- actual_map(2019)
-
-### 3f. Create a choropleth map of predicted ED rate in 2020 ----
-pred_2020 <- ggplot(df_edrate, aes(fill = edrate_pred_2020)) +
-  geom_sf() +
-  scale_fill_viridis_c(option = "magma") +
+  facet_wrap(~ year, ncol = 2) +
+  labs(title = "Actual",
+       fill = "ED Rate") +
   theme_bw() +
-  labs(title = "Predicted ED Rate in 2020", x = "", y = "") +
-  theme(legend.position = c(0.85, 0.8)) +
-  theme(legend.background = element_blank(),
-        legend.title = element_blank()) 
+  theme(
+    text = element_text(family = "serif"),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  scale_fill_viridis_c(option = "viridis",
+                       direction = -1,
+                       na.value = "grey95") +
+  guides(fill = guide_colorbar(title.position = "top")) +
+  coord_sf(datum = NA)
 
-### 3g. Print combined plot ----
-((
-  actual_2015 + actual_2016 + actual_2017 / actual_2018 + actual_2019 + plot_layout(guides = 'keep')
-) | pred_2020
-) + plot_layout(guides = 'collect')
+### 3b. Create a plot of predicted values in 2020 ----
+### Subset analytic_df to only include 2015-2019
+df_pred <- analytic_df %>%
+  filter(year == 2020) %>%
+  mutate(edrate_pred = ifelse(edrate_pred == 0, NA, edrate_pred)) %>%  # This is done to stretch the palette.
+  select(c("fips", "name", "year", "edrate_pred")) %>%
+  left_join(counties, by = c("fips" = "GEOID"))
 
-### 3h. Save combined plot in ---- 
-ggsave(here::here("figures", "actualvspred.png"), width = 12, height = 8)
+### Create a facet wrap by year, plotting actual ED rates using ggplot geom_sf
+pred_plot <- df_pred %>%
+  ggplot(aes(fill = edrate_pred, geometry = geometry)) +
+  geom_sf() +
+  labs(title = "Predicted (2020)",
+       fill = "ED Rate") +
+  theme_bw() +
+  theme(text = element_text(family = "serif"),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom") +
+  scale_fill_viridis_c(option = "viridis",
+                       direction = -1,
+                       na.value = "grey95") +
+  guides(fill = guide_colorbar(title.position = "top")) +
+  coord_sf(datum = NA)
+
+### 3c. Print combined plot ----
+choropleth <-
+  (actual_plot) | (pred_plot + plot_layout(guides = 'keep'))
+
+choropleth <-
+  choropleth + plot_layout(widths = c(2, 1)) +
+  plot_annotation(title = 'Actual ED Rates (2015-2019) vs. Predicted ED rates (2020)',
+                  subtitle = 'ED Rates corresponding to visits per 10,000 persons',
+                  caption = 'Note: Counties with 0 ED visits are not depicted')
+
+### 3d. Save combined plot  ---- 
+png(
+  here::here("figures", "edrate_choropleth.png"),
+  width = 8,
+  height = 8,
+  units = "in",
+  res = 300
+)
+
+choropleth &
+  theme(
+    text = element_text('serif'),
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+  )
+
+dev.off()
 
 ## 4. Choropleth of all SDoH variables ----
 ### 4a. Create a data frame with the relevant vars  ----
