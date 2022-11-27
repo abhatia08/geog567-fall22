@@ -176,9 +176,9 @@ scatter_xgb <- df_scatter %>%
               slope = 1,
               color = "black") +
   labs(
-    x = "Actual ED Rate",
+    x = "Observed ED Rate",
     y = "Predicted ED Rate",
-    title = "Plot of Actual vs. Predicted ED Rates (XGBoost Model)"
+    title = "Plot of Observed vs. Predicted ED Rates (XGBoost Model)"
   ) +
   theme_bw() +
   theme(text = element_text(family = "serif"),
@@ -204,9 +204,9 @@ scatter_rf <- df_scatter %>%
               slope = 1,
               color = "black") +
   labs(
-    x = "Actual ED Rate",
+    x = "Observed ED Rate",
     y = "Predicted ED Rate",
-    title = "Plot of Actual vs. Predicted ED Rates (Random Forest)"
+    title = "Plot of Observed vs. Predicted ED Rates (Random Forest)"
   ) +
   theme_bw() +
   theme(text = element_text(family = "serif"),
@@ -256,7 +256,7 @@ actual_plot <- df_actual %>%
   ggplot(aes(fill = edrate_actual, geometry = geometry)) +
   geom_sf() +
   facet_wrap(~ year, ncol = 2) +
-  labs(title = "Actual",
+  labs(title = "Observed",
        fill = "ED Rate") +
   theme_bw() +
   theme(
@@ -300,7 +300,7 @@ choropleth <-
 
 choropleth <-
   choropleth + plot_layout(widths = c(2, 1)) +
-  plot_annotation(title = 'Actual ED Rates (2015-2019) vs. Predicted ED rates (2020)',
+  plot_annotation(title = 'Observed ED Rates (2015-2019) vs. Predicted ED rates (2020)',
                   subtitle = 'ED Rates corresponding to visits per 10,000 persons',
                   caption = 'Note: Counties with 0 ED visits are not depicted')
 
