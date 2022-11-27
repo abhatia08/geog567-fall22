@@ -11,10 +11,11 @@ library(ggpubr)
 library(sf)
 library(randomForest)
 library(caret)
-
+library(tmap)
+library(tmaptools)
 
 ## 2. Declare `here` ----
-here::i_am("scripts/07_analysis.R")
+here::i_am("scripts/07_figures.R")
 
 ## 3. Run Util.R ----
 source(here::here("scripts", "util.R"))
@@ -25,70 +26,325 @@ if (!file.exists(here::here("derived_data", "predictions.csv"))) {
 } 
 
 ## 5. Load data ----
-df <- read_csv(here::here("derived_data", "predictions.csv"))
-counties <- st_read(here::here("source_data", "CA_counties", "CA_counties_TIGER2016.shp"))
+analytic_df <-
+  read_csv(here::here("derived_data", "predictions.csv"))
+
+counties <-
+  st_read(here::here("source_data", "CA_counties", "CA_counties_TIGER2016.shp"))
+
 xgb_model <- readRDS(here::here("derived_data", "xgboostmodel.RDS"))
 load(here::here("derived_data", "rf_model.RData"))
+
 
 # 07. FIGURES ----
 
 ## 1. Feature Importance ----
+
+## 1.1 Export xgb feature importance
 xgb_features <- caret::varImp(xgb_model)
+features <- as.data.frame(xgb_features$importance)
+## Rename to xgb_imp
+colnames(features) <- "xgb_imp"
+## convert rownames to column
+features$feature <- rownames(features)
 
-png(here::here("figures", "xgbfeatureimp.png"),
-    width = 600,
-    height = 600)
-plot(xgb_features, top = 13)
-dev.off()
+## 1.2. Export rf feature importance
+rf_features <- as.data.frame(varImp(rf_final_model))
+## Rename to rf_imp
+colnames(rf_features) <- "rf_imp"
+## convert rownames to column
+rf_features$feature <- rownames(rf_features)
 
-png(here::here("figures", "rffeatureimp.png"),
-    width = 600,
-    height = 600)
-randomForest::varImpPlot(rf_final_model)
-dev.off()
+## 1.3 Wrangling
+# Left join to get both xgb and rf feature importance
+features <-
+  left_join(features, rf_features, by = "feature")
+features <- features %>% select (c("feature", "xgb_imp", "rf_imp"))
+# Convert to long format
+features <-
+  features %>% gather(key = "model", value = "importance",-feature)
+# Rename xgb_imp to XGBoost and rf_imp to Random Forest
+features$model <-
+  recode(features$model, "xgb_imp" = "XGBoost", "rf_imp" = "Random Forest")
 
-## 2. Create a scatterplot of edrate_actual vs. edrate_predicted ----
-scatterplot <- ggplot(df, aes(x = edrate_actual, y = edrate_pred)) +
-  geom_point() +
-  geom_abline(intercept = 0, slope = 1, color = "red") +
+## Create feature categories
+features <- features %>% 
+  mutate(category = ifelse(
+    feature %in% c("p65older", "p5younger", "p_poverty", "p_nonwhite"),
+    "Demographics",
+    ifelse(
+      feature %in% c(
+        "p_medicare_elig1000",
+        "p_medicare_bene1000",
+        "p_mds1000",
+        "p_hosp_permil",
+        "p_bedsper1000"
+      ),
+      "Health System",
+      "Remote Sensing"
+    )
+  ))
+
+## Rename features to more readable names
+features$feature <-
+  recode(
+    features$feature,
+    "p65older" = "% Population over 65 years",
+    "p5younger" = "% Population below 5 years",
+    "p_poverty" = "% Population below poverty",
+    "p_nonwhite" = "% Population that is Non-white",
+    "p_medicare_elig1000" = "# Medicare eligible per 1000 individuals",
+    "p_medicare_bene1000" = "# Medicare beneficiaries per 1000 individuals",
+    "p_mds1000" = "# MDs per 1000 individuals",
+    "p_hosp_permil" = "# Hospitals per 1000 individuals",
+    "p_bedsper1000" = "# Hospital beds per 1000 individuals",
+    "mean_intensity" = "Intensity of burning (Mean)",
+    "mean_aerosol" = "Aerosol Optical Depth (Mean)",
+    "mean_days" = "Number of days with fire (Mean)",
+    "burned_ratio" = "Ratio of burned area to total area (mean)"
+  )
+
+## Compute average imporatnce for each feature (for plotting)
+features <- features %>% 
+  group_by(feature, category) %>% 
+  summarise(average_importance = mean(importance)) %>% 
+  ungroup() %>% 
+  left_join(features, by = c("feature", "category"))
+
+
+## 1.4 Plot Feature importance
+
+feature_imp <- features %>%
+  ggplot(aes(x = importance, y = feature, color = model)) +
+  geom_point(position = position_dodge(0.5)) +
+  geom_linerange(aes(xmin = 0, xmax = importance),
+                 linetype = "solid",
+                 position = position_dodge(.5)) +
+  geom_vline(xintercept = 0,
+             linetype = "solid",
+             color = "grey70") +
+  scale_x_continuous(limits = c(-5, 100)) +
+  labs(x = "Importance", y = "Feature", color = "Model") +
   theme_bw() +
-  labs(x = "Actual ED Rate", y = "Predicted ED Rate") +
-  theme(legend.position = "none") 
+  theme(legend.position = "bottom",
+        text = element_text(family = "serif")) +
+  scale_color_manual(values = c("XGBoost" = "#2E86AB", "Random Forest" = "#ED6A5A")) +
+  guides(color = guide_legend(title = NULL)) +
+  scale_y_discrete(limits = features$feature[order(features$average_importance, decreasing = FALSE)])
 
-scatterplot
+## 1.5 Save plot
+png(
+  here::here("figures", "feature_importance.png"),
+  width = 8,
+  height = 8,
+  units = "in",
+  res = 300
+)
+feature_imp
+dev.off()
 
-## 3. Create county map of predicted ED rate in 2020 against actual ED rate for 2019 ----
-### 3a. Create a data frame with the county name, fips code, edrate_actual for only the year 2019 ----
-df_2019 <- df %>%
-  filter(year == 2019) %>%
-  dplyr::select(c(name, fips, edrate_actual)) %>%
-  rename(edrate_actual_2019 = edrate_actual)
 
-### 3b. Create a data frame with the county name, fips code, edrate_predicted for only the year 2020 ----
-df_2020 <- df %>%
-  filter(year == 2020) %>%
-  dplyr::select(c(name, fips, edrate_pred)) %>%
-  rename(edrate_pred_2020 = edrate_pred)
+## 2. Scatterplot of edrate_actual vs. edrate_predicted ----
 
-### 3c. Merge the two data frames together ----
-df_2019_2020 <- merge(df_2019, df_2020, by = c("fips", "name"))
+## Create a DF with actual and predicted values for only 2015-2019 and drop counties with missing values or 0 ED visits
+df_scatter <- analytic_df %>%
+  filter(year %in% 2015:2019) %>%
+  filter(!is.na(edrate_actual)) %>%
+  filter(edrate_actual != 0)
 
-### 3d. Merge the data frame with the county shapefile ----
-df_2019_2020 <- counties %>%
-  left_join(df_2019_2020, by = c("GEOID" = "fips"))
+## Calculate RMSE for scatterplot, ignoring NAs (XGB)
+rmse_xgb <-
+  sqrt(mean((
+    df_scatter$edrate_actual - df_scatter$edrate_pred
+  ) ^ 2,
+  na.rm = TRUE))
 
-### 3c. Plot maps ----
-actual_map <- ggplot(df_2019_2020, aes(fill = edrate_actual_2019)) +
+## Calculate RMSE for scatterplot, ignoring NAs (RF)
+rmse_rf <-
+  sqrt(mean((
+    df_scatter$edrate_actual - df_scatter$edrate_pred_rf
+  ) ^ 2,
+  na.rm = TRUE))
+
+
+## Scatterplot of actual vs. predicted with RMSE 
+
+scatter_xgb <- df_scatter %>%
+  ggplot(aes(x = edrate_actual, y = edrate_pred)) +
+  geom_point(alpha = 0.5, color = "#2E86AB") +
+  geom_abline(intercept = 0,
+              slope = 1,
+              color = "black") +
+  labs(
+    x = "Actual ED Rate",
+    y = "Predicted ED Rate",
+    title = "Plot of Actual vs. Predicted ED Rates (XGBoost Model)"
+  ) +
+  theme_bw() +
+  theme(text = element_text(family = "serif"),
+        plot.title = element_text(hjust = 0.5)) +
+  annotate(
+    "text",
+    x = 60,
+    y = 30,
+    label = paste0("RMSE = ", round(rmse_xgb, 2)),
+    size = 5,
+    family = "serif"
+  ) +
+  scale_x_continuous(breaks = seq(0, max(df_scatter$edrate_actual), by = 20),
+                     limits = c(0, max(df_scatter$edrate_actual))) +
+  scale_y_continuous(breaks = seq(0, max(df_scatter$edrate_pred), by = 20),
+                     limits = c(0, max(df_scatter$edrate_pred)))
+
+## Scatterplot of actual vs. predicted with RMSE (RF)
+scatter_rf <- df_scatter %>%
+  ggplot(aes(x = edrate_actual, y = edrate_pred_rf)) +
+  geom_point(alpha = 0.5, color = "#ED6A5A") +
+  geom_abline(intercept = 0,
+              slope = 1,
+              color = "black") +
+  labs(
+    x = "Actual ED Rate",
+    y = "Predicted ED Rate",
+    title = "Plot of Actual vs. Predicted ED Rates (Random Forest)"
+  ) +
+  theme_bw() +
+  theme(text = element_text(family = "serif"),
+        plot.title = element_text(hjust = 0.5)) +
+  annotate(
+    "text",
+    x = 60,
+    y = 30,
+    label = paste0("RMSE = ", round(rmse_rf, 2)),
+    size = 5,
+    family = "serif"
+  ) +
+  scale_x_continuous(breaks = seq(0, max(df_scatter$edrate_actual), by = 20),
+                     limits = c(0, max(df_scatter$edrate_actual))) +
+  scale_y_continuous(breaks = seq(0, max(df_scatter$edrate_pred), by = 20),
+                     limits = c(0, max(df_scatter$edrate_pred)))
+
+## Save plot
+png(
+  here::here("figures", "scatterplot_compare.png"),
+  width = 12,
+  height = 8,
+  units = "in",
+  res = 300
+)
+
+(scatter_rf | scatter_xgb) 
+
+dev.off()
+
+## Clear memory before mapping except for analytic_df and counties
+rm(list = ls()[!ls() %in% c("analytic_df", "counties")])
+
+
+## 3. Choropleth of predicted ED rate in 2020 against actual ED rates for 2015-2019 ----
+### 3a. Create a data frame with the county name, fips code, edrate_actual for the individual years 2015-2019 ----
+
+### Subset analytic_df to only include 2015-2019
+df_actual <- analytic_df %>%
+  filter(year %in% 2015:2019) %>%
+  select(c("fips", "name", "year", "edrate_actual")) %>%
+  left_join(counties, by = c("fips" = "GEOID"))
+
+
+### Create a facet wrap by year, plotting actual ED rates using ggplot geom_sf
+df_actual %>%
+  ggplot(aes(fill = edrate_actual, geometry = geometry)) +
   geom_sf() +
-  scale_fill_viridis_c(option = "magma") +
-  theme_bw() +
-  labs(title = "Actual ED Rate in 2019", x = "", y = "") +
-  theme(legend.position = c(0.85, 0.8)) +
-  theme(legend.background = element_blank(),
-        legend.title = element_blank()) 
+  facet_wrap( ~ year) #+
+  # labs(title = "Actual ED Rates by County (2015-2019)",
+  #      fill = "ED Rate") +
+  # theme_bw() +
+  # theme(text = element_text(family = "serif"),
+  #       plot.title = element_text(hjust = 0.5)) +
+  # scale_fill_viridis_c(option = "magma", direction = -1) +
+  # guides(fill = guide_colorbar(title.position = "top")) +
+  # coord_sf(datum = NA)
 
-### Create a choropleth map of predicted ED rate in 2020 
-pred_map <- ggplot(df_2019_2020, aes(fill = edrate_pred_2020)) +
+
+
+
+# # Create a vector of years from 2015-2019 
+# years <- 2015:2019
+# 
+# # For i in years, create a df_i 
+# for (i in years) {
+#   assign(paste0("df_", i),
+#          analytic_df %>% filter(year == i))
+# }
+# 
+# ### 3b. Create a data frame with the county name, fips code, edrate_predicted for only the year 2020 ----
+# df_2020 <- analytic_df %>%
+#   filter(year == 2020) %>%
+#   dplyr::select(c(name, fips, edrate_pred)) %>%
+#   rename(edrate_pred_2020 = edrate_pred)
+# 
+# # ### 3c. Merge all the data frames together ----
+# # df_edrate <- df_2015 %>%
+# #   left_join(df_2016, by = c("name", "fips")) %>%
+# #   left_join(df_2017, by = c("name", "fips")) %>%
+# #   left_join(df_2018, by = c("name", "fips")) %>%
+# #   left_join(df_2019, by = c("name", "fips")) %>%
+# #   left_join(df_2020, by = c("name", "fips"))
+# # 
+# ### 3d. Merge the data frame with the county shapefile ----
+# df_2015 <- counties %>%
+#   left_join(df_edrate, by = c("GEOID" = "fips"))
+# 
+# # ### 3e. Create maps for each year with actual rates ----
+# # actual_map <- function(year) {
+# #  ggplot(df_edrate, aes(fill = paste0("edrate_actual_", year))) +
+# #   geom_sf() +
+# #   scale_fill_viridis_c(option = "magma") +
+# #   theme_bw() +
+# #   labs(title = paste0("Actual ED Rate in ", year), x = "", y = "") +
+# #   theme(legend.position = c(0.85, 0.8)) +
+# #   theme(legend.background = element_blank(),
+# #         legend.title = element_blank())
+# # 
+# # }
+
+
+
+
+
+### Create actual_map function using tmap ----
+# actual_map <- function(year) {
+#   tmp <- df_edrate %>%
+#     dplyr::select(c("geometry", paste0("edrate_actual_", year))) %>%
+#     rename(edrate = paste0("edrate_actual_", year))
+#   
+#   tmap_mode("plot")
+#   tm_shape(tmp) +
+#     tm_polygons("edrate", style = "jenks", palette = "magma") 
+#     tm_layout(title = paste0(year),
+#               legend.position = c("right", "bottom"),
+#               legend.bg.color = "transparent",
+#               legend.title = element_blank())
+# }
+
+# actual_2015 <- 
+
+  tm_shape(df_edrate) +
+  tm_polygons("edrate_actual_2015", style = "jenks", palette = "magma") 
+  # tm_layout(
+  #   title = "Actual ED rate in 2015",
+  #   legend.position = c("right", "bottom"),
+  # #   legend.bg.color = "transparent"
+  # )
+
+# actual_2015 <- actual_map(2015)
+# actual_2016 <- actual_map(2016)
+# actual_2017 <- actual_map(2017)
+# actual_2018 <- actual_map(2018)
+# actual_2019 <- actual_map(2019)
+
+### 3f. Create a choropleth map of predicted ED rate in 2020 ----
+pred_2020 <- ggplot(df_edrate, aes(fill = edrate_pred_2020)) +
   geom_sf() +
   scale_fill_viridis_c(option = "magma") +
   theme_bw() +
@@ -97,12 +353,16 @@ pred_map <- ggplot(df_2019_2020, aes(fill = edrate_pred_2020)) +
   theme(legend.background = element_blank(),
         legend.title = element_blank()) 
 
-actual_map + pred_map
+### 3g. Print combined plot ----
+((
+  actual_2015 + actual_2016 + actual_2017 / actual_2018 + actual_2019 + plot_layout(guides = 'keep')
+) | pred_2020
+) + plot_layout(guides = 'collect')
 
-### 3d. Save combined plot in ---- 
-ggsave(here::here("figures", "2019vs2020pred.png"), width = 12, height = 8)
+### 3h. Save combined plot in ---- 
+ggsave(here::here("figures", "actualvspred.png"), width = 12, height = 8)
 
-## 4. Choropleth of all SDoH variables
+## 4. Choropleth of all SDoH variables ----
 ### 4a. Create a data frame with the relevant vars  ----
 df_mean <- df %>%
   group_by(fips, name) %>%
