@@ -337,38 +337,37 @@ if (!file.exists(here::here("derived_data", "xgboostmodel.RDS"))) {
   
 }
 ## 6.5 Final Predictions ----
-## Finally, since both models performed somewhat-similarly, we will make ensemble predictions
+## It looks like the XGBoost model is the best model, so we will use that to make our final predictions, but retain the RF model to show the difference in performance.
 
 ### 1. Make predictions
 pred_df <- analytic_df[,-4]
 y_pred_rf = predict(rf_final_model, newdata = pred_df)
 y_pred_xgb = predict(xgb_model, pred_df)
-y_ens = (y_pred_rf + y_pred_xgb) / 2
 
 predictions <- analytic_df[, 1:3]
 predictions$edrate_pred <- round(y_ens, 1)
+predictions$edrate_pred_rf <- round(y_pred_rf, 1)
+predictions$edrate_pred <- round(y_pred_xgb, 1)
 
-
-### 2. Reload data and join in predicted values, and sort
 
 predictions_df <-
-  analytic_df %>% left_join(predictions, by = c("fips", "year", "name")) 
+  analytic_df %>% left_join(predictions, by = c("fips", "year", "name"))
 
 
 predictions_df$edrate_pred[predictions_df$name == "Alpine"] <-
   0 # Alpine is an anomaly with no hospitals
 
-
-### 2. Sort columns
 predictions_df <-
   predictions_df %>% rename(edrate_actual = ed_rate) %>%
-  dplyr::select(fips,
-                name,
-                year,
-                edrate_actual,
-                edrate_pred,
-                dplyr::everything())
-
+  dplyr::select(
+    fips,
+    name,
+    year,
+    edrate_actual,
+    edrate_pred,
+    edrate_pred_rf,
+    dplyr::everything()
+  )
 
 ### 3. Write data
 readr::write_csv(predictions_df, here::here("derived_data", "predictions.csv"))
