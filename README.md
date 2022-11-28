@@ -6,7 +6,9 @@ This repository contains data and scripts used for the final project of [GEOG 56
 ![](figures/fire_timeseries.png)
 
 ### Objectives
+
 The state of California in the western United States has experienced increasingly severe drought conditions, and more frequent, severe (acute) wildfires. For the purposes of this analysis, we aim to examine the potential for remote sensing data to improve predictive models for Asthma-related Emergency Department admission rates at the county-level in California.
+
 ---
 ## Project structure 
 
