@@ -11,8 +11,7 @@ library(ggpubr)
 library(sf)
 library(randomForest)
 library(caret)
-library(tmap)
-library(tmaptools)
+library(RColorBrewer)
 
 ## 2. Declare `here` ----
 here::i_am("scripts/07_figures.R")
@@ -385,13 +384,13 @@ for (i in sdoh_vec) {
       theme_bw() +
       theme(
         text = element_text(family = "serif"),
-        legend.position = c(0.75, 0.85),
+        legend.position = c(0.75, 0.80),
         legend.background = element_blank(),
-        legend.key.size = unit(0.5, 'cm'),
-        legend.key.height = unit(0.5, 'cm'), 
-        legend.key.width = unit(0.5, 'cm'), 
-        legend.title = element_text(size=10), 
-        legend.text = element_text(size=7)
+        legend.key.size = unit(0.8, 'cm'),
+        legend.key.height = unit(0.8, 'cm'), 
+        legend.key.width = unit(0.8, 'cm'), 
+        legend.title = element_text(size=11), 
+        legend.text = element_text(size=11)
       ) +
       scale_fill_viridis_c(option = "magma",
                            direction = -1,
@@ -412,7 +411,7 @@ sdoh_maps <- (p65older_map | p5younger_map | p_poverty_map) /
 
 ### 4e. Save combined plots
 png(
-  here::here("figures", "sdoh.png"),
+  here::here("figures", "sdoh_choropleth.png"),
   width = 15,
   height = 15,
   units = "in",
@@ -421,15 +420,96 @@ png(
 
 sdoh_maps &
     theme(
-      text = element_text('serif'),
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
+      text = element_text('serif')
     )
+
+dev.off()
+
+
+## Clear memory before mapping except for analytic_df and counties
+rm(list = ls()[!ls() %in% c("analytic_df", "counties")])
+
+## 5. Choropleth of remote sensing variables (Mean)----
+### 4a. Create a data frame with the relevant vars and add geometry
+df_mean <- analytic_df %>%
+  group_by(fips, name) %>%
+  summarise(
+    mean_intensity = mean(mean_intensity),
+    mean_aerosol = mean(mean_aerosol),
+    mean_days = mean(mean_days),
+    burned_ratio = mean(burned_ratio)
+  ) %>% ungroup () %>%
+  left_join(counties, by = c("fips" = "GEOID"))
+
+## 4b. Label variables
+labelled::var_label(df_mean) <- list(
+  mean_intensity = "Intensity of burning (Mean)",
+  mean_aerosol = "Aerosol Optical Depth (Mean)",
+  mean_days = "Number of days with fire (Mean)",
+  burned_ratio = "Ratio of burned area to total area (mean)"
+)
+
+### 4c. Plot maps
+
+# Vector of all vars
+fire_vec <- c("mean_intensity",
+              "mean_aerosol",
+              "mean_days",
+              "burned_ratio")
+
+
+# Loop over fire vector to produce maps
+for (i in fire_vec) {
+  assign(
+    paste0(i, "_map"),
+    df_mean %>%
+      ggplot(aes(
+        fill = !!sym(i), geometry = geometry
+      )) +
+      geom_sf() +
+      theme_bw() +
+      theme(
+        text = element_text(family = "serif"),
+        legend.position = c(0.75, 0.80),
+        legend.background = element_blank(),
+        legend.key.size = unit(1.3, 'cm'),
+        legend.key.height = unit(1.3, 'cm'),
+        legend.key.width = unit(1.3, 'cm'),
+        legend.title = element_text(size = 13),
+        legend.text = element_text(size = 13)
+      ) +
+      # scale_fill_brewer(palette = "Reds",
+      #                         na.value = "grey95") +
+      scale_fill_gradientn(colours = brewer.pal(5, "OrRd"),
+                           na.value = "grey95") +
+      guides(fill = guide_colorbar(
+        title.position = "top",
+        title = labelled::var_label(df_mean[[i]])
+      )) +
+      coord_sf(datum = NA)
+  )
+}
+
+
+### 4d. Combine Plots
+fire_maps <-
+  (mean_intensity_map |
+     mean_aerosol_map) / (mean_days_map | burned_ratio_map)
+
+### 4e. Save combined plots
+png(
+  here::here("figures", "fire_choropleth.png"),
+  width = 15,
+  height = 15,
+  units = "in",
+  res = 300
+)
+
+fire_maps &
+  theme(text = element_text('serif'))
 
 dev.off()
 
 
 # ## Clear memory before mapping except for analytic_df and counties
 # rm(list = ls()[!ls() %in% c("analytic_df", "counties")])
-# 
-
