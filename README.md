@@ -25,6 +25,7 @@ The state of California in the western United States has experienced increasingl
 Please report issues to the [issues page](https://github.com/abhatia08/geog567-fall22/issues).
 
 **Disclaimer**
+
 This project was conducted for educational purposes only, and are the results have not been peer-reviewed, or validated. The authors are not responsible for any misuse of the data or code provided in this repository. 
 
 ---
