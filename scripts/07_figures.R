@@ -94,7 +94,7 @@ features$feature <-
     "p_medicare_elig1000" = "# Medicare eligible per 1000 individuals",
     "p_medicare_bene1000" = "# Medicare beneficiaries per 1000 individuals",
     "p_mds1000" = "# MDs per 1000 individuals",
-    "p_hosp_permil" = "# Hospitals per 1000 individuals",
+    "p_hosp_permil" = "# Hospitals per million individuals",
     "p_bedsper1000" = "# Hospital beds per 1000 individuals",
     "mean_intensity" = "Intensity of burning (Mean)",
     "mean_aerosol" = "Aerosol Optical Depth (Mean)",
@@ -351,7 +351,7 @@ labelled::var_label(df_mean) <- list(
   p_medicare_elig1000 = "# Medicare eligible per 1000",
   p_medicare_bene1000 = "# Medicare beneficiaries per 1000",
   p_mds1000 = "# MDs per 1000",
-  p_hosp_permil = "# Hospitals per 1000",
+  p_hosp_permil = "# Hospitals per million",
   p_bedsper1000 = "# Hospital beds per 1000"
 )
 
